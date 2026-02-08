@@ -36,13 +36,14 @@ Architecture:
                       └───────────────┘
 """
 
-import subprocess
-import os
-import sys
-import time
-import threading
-import signal
 import argparse
+import json
+import os
+import signal
+import subprocess
+import sys
+import threading
+import time
 
 # ============================================================================
 # CONFIGURATION
@@ -395,8 +396,42 @@ def run_without_animation(action, hold_time=3):
     subprocess.run(cmd)
 
 
+def _emit_json(payload: dict) -> None:
+    """Print JSON to stdout for introspection flags."""
+    print(json.dumps(payload, indent=2, sort_keys=True))
+
+
+def _handle_introspection(args: argparse.Namespace) -> int | None:
+    """Handle introspection flags, returning exit code or None to continue."""
+    from .config import config_defaults, config_schema, validate_config_file, load_config
+
+    if args.print_defaults:
+        _emit_json(config_defaults())
+        return 0
+
+    if args.print_config_schema:
+        _emit_json(config_schema())
+        return 0
+
+    if args.validate_config:
+        errors = validate_config_file()
+        if errors:
+            for error in errors:
+                print(error, file=sys.stderr)
+            return 1
+        return 0
+
+    if args.print_resolved:
+        _emit_json(load_config())
+        return 0
+
+    return None
+
+
 def parse_args():
     """Parse command line arguments."""
+    from . import __version__
+
     available = list_animations()
 
     parser = argparse.ArgumentParser(
@@ -413,8 +448,15 @@ Examples:
 """
     )
 
+    parser.add_argument("--version", action="version", version=f"power-manager {__version__}")
+    parser.add_argument("--print-defaults", action="store_true", help="Print default configuration as JSON and exit")
+    parser.add_argument("--print-config-schema", action="store_true", help="Print configuration schema as JSON and exit")
+    parser.add_argument("--validate-config", action="store_true", help="Validate configuration and exit")
+    parser.add_argument("--print-resolved", action="store_true", help="Print resolved configuration as JSON and exit")
+
     parser.add_argument(
         "action",
+        nargs="?",
         choices=["shutdown", "reboot", "logout", "suspend", "hibernate", "windows", "test"],
         help="Power action to execute"
     )
@@ -434,11 +476,21 @@ Examples:
         help="Hold black screen for N seconds in test mode (default: 3)"
     )
 
-    return parser.parse_args()
+    return parser, parser.parse_args()
 
 
 def main():
-    args = parse_args()
+    parser, args = parse_args()
+
+    # Handle introspection flags first
+    result = _handle_introspection(args)
+    if result is not None:
+        return result
+
+    if not args.action:
+        parser.print_help()
+        return 1
+
     action = args.action
     animation_name = args.animation
     hold_time = args.hold
