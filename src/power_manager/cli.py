@@ -54,8 +54,13 @@ DEBUG_LOG = "/tmp/power-manager-debug.log"
 # Animation discovery - try to import from shutdown-effect, fallback to local logic
 try:
     # When shutdown-effect is available as a sibling package
-    sys.path.insert(0, os.path.join(os.path.dirname(SCRIPT_DIR), "shutdown-effect"))
-    from discovery import get_animations_dir, list_animations as _list_animations, get_animation_script as _get_script
+    import importlib.util
+    _discovery_path = os.path.join(os.path.dirname(SCRIPT_DIR), "shutdown-effect", "discovery.py")
+    _spec = importlib.util.spec_from_file_location("discovery", _discovery_path)
+    _discovery = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_discovery)
+    _list_animations = _discovery.list_animations
+    _get_script = _discovery.get_animation_script
 
     def get_animation_script(animation_name):
         """Get the path to the animation script for the specified animation."""
@@ -66,7 +71,7 @@ try:
         """List available animations."""
         return _list_animations()
 
-except ImportError:
+except (ImportError, FileNotFoundError, AttributeError):
     # Standalone fallback - check common locations
     def _find_animations_dir():
         """Find animations directory from environment or XDG config."""

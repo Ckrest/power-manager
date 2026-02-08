@@ -1,0 +1,19 @@
+[project]
+name = "power-manager"
+version = "1.0.0"
+description = "Power action orchestrator with animation hooks"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+wayfire = ["wayfire"]
+
+[project.scripts]
+power-manager = "power_manager.cli:main"
+
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
