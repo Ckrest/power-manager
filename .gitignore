@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment
+.env
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# Build
+build/
+dist/
+
+# Logs and databases
+*.log
+*.db
+*.sqlite3
+
+# Serialized data
+*.pkl
+*.pt
+
+# Systems-specific (tracked by vcsh systems)
+manifest.yaml
+NOTES.md
+trait_*.yaml
