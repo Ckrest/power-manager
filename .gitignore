@@ -27,7 +27,6 @@ dist/
 *.pkl
 *.pt
 
-# Systems-specific (tracked by vcsh systems)
 manifest.yaml
 NOTES.md
 trait_*.yaml

@@ -2,7 +2,10 @@
 name = "power-manager"
 version = "1.0.0"
 description = "Power action orchestrator with animation hooks"
+readme = "README.md"
 requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [{name = "Ckrest"}]
 dependencies = []
 
 [project.optional-dependencies]
@@ -10,6 +13,9 @@ wayfire = ["wayfire"]
 
 [project.scripts]
 power-manager = "power_manager.cli:main"
+
+[project.urls]
+Repository = "https://github.com/Ckrest/power-manager"
 
 [build-system]
 requires = ["setuptools>=64"]
