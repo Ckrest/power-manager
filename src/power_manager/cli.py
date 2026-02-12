@@ -79,7 +79,8 @@ except (ImportError, FileNotFoundError, AttributeError):
         env_dir = os.environ.get('SHUTDOWN_EFFECTS_DIR')
         if env_dir and os.path.isdir(env_dir):
             return env_dir
-        xdg_dir = os.path.expanduser('~/.config/shutdown-effect/animations')
+        xdg_config = os.environ.get('XDG_CONFIG_HOME', os.path.expanduser('~/.config'))
+        xdg_dir = os.path.join(xdg_config, 'shutdown-effect', 'animations')
         if os.path.isdir(xdg_dir):
             return xdg_dir
         # Legacy: check sibling directory
