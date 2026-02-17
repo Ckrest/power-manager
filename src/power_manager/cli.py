@@ -49,6 +49,8 @@ import time
 # CONFIGURATION
 # ============================================================================
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_DESKTOP_DIR = os.path.dirname(os.path.dirname(os.path.dirname(SCRIPT_DIR)))
+#  power_manager/ → src/ → power-manager/ → desktop/
 DEFAULT_ANIMATION = "fire"  # Available: fire, fade, sakura, none
 DEBUG_LOG = "/tmp/power-manager-debug.log"
 
@@ -56,7 +58,7 @@ DEBUG_LOG = "/tmp/power-manager-debug.log"
 try:
     # When shutdown-effect is available as a sibling package
     import importlib.util
-    _discovery_path = os.path.join(os.path.dirname(SCRIPT_DIR), "shutdown-effect", "discovery.py")
+    _discovery_path = os.path.join(_DESKTOP_DIR, "shutdown-effect", "src", "discovery.py")
     _spec = importlib.util.spec_from_file_location("discovery", _discovery_path)
     _discovery = importlib.util.module_from_spec(_spec)
     _spec.loader.exec_module(_discovery)
@@ -84,7 +86,7 @@ except (ImportError, FileNotFoundError, AttributeError):
         if os.path.isdir(xdg_dir):
             return xdg_dir
         # Legacy: check sibling directory
-        sibling = os.path.join(os.path.dirname(SCRIPT_DIR), "shutdown-effect", "animations")
+        sibling = os.path.join(_DESKTOP_DIR, "shutdown-effect", "src", "animations")
         if os.path.isdir(sibling):
             return sibling
         return None
