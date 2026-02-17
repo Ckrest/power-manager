@@ -17,6 +17,7 @@ venv/
 # Build
 build/
 dist/
+*.egg-info/
 
 # Logs and databases
 *.log
