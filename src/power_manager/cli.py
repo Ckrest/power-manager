@@ -121,12 +121,12 @@ def install_signal_handlers():
 
 # Power commands (None = test mode)
 POWER_COMMANDS = {
-    "shutdown": ["sudo", "-A", "shutdown", "-h", "now"],
-    "reboot": ["sudo", "-A", "reboot"],
+    "shutdown": ["systemctl", "poweroff"],
+    "reboot": ["systemctl", "reboot"],
     "logout": ["loginctl", "terminate-session", ""],
     "suspend": ["systemctl", "suspend"],
     "hibernate": ["systemctl", "hibernate"],
-    "windows": ["sudo", "-A", "reboot"],
+    "windows": ["systemctl", "reboot"],
     "test": None,
 }
 
@@ -438,6 +438,7 @@ def parse_args():
     available = list_animations()
 
     parser = argparse.ArgumentParser(
+        prog="power-manager",
         description="Power action orchestrator with animation hooks",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=f"""
@@ -545,3 +546,6 @@ def main():
     return 0
 
 
+if __name__ == "__main__":
+    sys.argv[0] = "power-manager"
+    raise SystemExit(main())
